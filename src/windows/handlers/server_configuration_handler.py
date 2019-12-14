@@ -1,10 +1,12 @@
 import gi
+
 gi.require_version("Gtk", "3.0")
-from gi.repository import GObject as gobject
+from gi.repository import GObject
 
 
-class ServerConfigurationHandler(gobject.GObject):
+class ServerConfigurationHandler(GObject.GObject):
     """docstring for ServerConfiguration"""
+
     def __init__(self, window):
         super(ServerConfigurationHandler, self).__init__()
         self.window = window
@@ -14,12 +16,13 @@ class ServerConfigurationHandler(gobject.GObject):
         self.status = window.status
 
     def on_quit(self, button):
-        print("quit")
+        """
+        :param button:
+        """
         self.window.get_application().quit()
 
-
     def on_play(self, button):
-        # Clear statusbar
+        # Clear status
         self.status.set_text("")
 
         # Get data
@@ -30,9 +33,15 @@ class ServerConfigurationHandler(gobject.GObject):
             self.status.set_text("Fill data and try again.")
             return
 
-        self.emit("play_signal", self.nick.get_text(), self.ip.get_text(), self.port.get_text())
+        try:
+            port = int(port)
+        except ValueError:
+            self.status.set_text("Incorrect data, try again.")
+            return
+
+        self.emit("play_signal", nick, ip, port)
 
 
-gobject.type_register(ServerConfigurationHandler)
-gobject.signal_new("play_signal", ServerConfigurationHandler, gobject.SIGNAL_ACTION,
-               gobject.TYPE_NONE, (str, str, str))
+GObject.type_register(ServerConfigurationHandler)
+GObject.signal_new("play_signal", ServerConfigurationHandler, GObject.SIGNAL_ACTION,
+                   GObject.TYPE_NONE, (str, str, int))

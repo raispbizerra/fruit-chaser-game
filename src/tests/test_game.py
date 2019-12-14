@@ -1,5 +1,6 @@
 import unittest
-import game as gm
+from src import game as gm
+
 
 class TestGame(unittest.TestCase):
 
